@@ -1,8 +1,8 @@
+import time
 import boto3
 import requests
 import yaml
 import json
-import time
 import random
 import datetime
 from datetime import date, timedelta, datetime
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     
     start_time = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z" 
     end_time = (datetime.utcnow()- timedelta(hours=1)).isoformat("T") + "Z"
-    old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + '/*')
+    old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
     random.shuffle(symbols)
 
     for symbol in symbols[:450]:
@@ -68,7 +68,18 @@ if __name__ == "__main__":
     # keep data for trailing week
     df = df.filter(df["date"] != week_ago)
     df.repartition(1).write.json('s3://' + bucket_name + '/twitter-data-' + today)
-    # delete old files
-    response = s3.list_objects(Bucket=bucket_name, Prefix="twitter-data-" + yesterday)
-    for obj in response["Contents"]:
-        s3.delete_object(Bucket=bucket_name, Key=obj["Key"])
+    # rename file and delete old files
+    time.sleep(60)
+    response = s3.list_objects(Bucket=bucket_name, Prefix="twitter-data-" + today)
+    files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
+    files.append("twitter-data-" + yesterday + ".json")
+    for f in files:
+        if "part" in f:
+            s3.copy_object(
+            ACL='public-read',
+            Bucket=bucket_name,
+            CopySource=bucket_name + "/" + f,
+            Key="twitter-data-" + today + ".json")
+            s3.delete_object(Bucket=bucket_name, Key=f)
+        else:
+            s3.delete_object(Bucket=bucket_name, Key=f) 

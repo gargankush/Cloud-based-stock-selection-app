@@ -43,12 +43,12 @@ if __name__ == "__main__":
     yesterday = (date.today() - timedelta(days=1)).isoformat()
     today = date.today().isoformat()
     
-    old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '/*', header=True, inferSchema=True)
+    old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
     
-    for symbol in symbols:
+    for symbol in symbols[:5]: #remove [:3]
         try:
             price_data = alphavantage_api_call(api_key, symbol)
-            time.sleep(15)
+            #time.sleep(15) # UNCOMMENT #
             price_data = json.loads(price_data.text)["Time Series (1min)"]
             for tf, price in price_data.items():
                 row.append((symbol, 
@@ -64,7 +64,18 @@ if __name__ == "__main__":
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     df.repartition(1).write.csv('s3://' + bucket_name + '/price-data-' + today, header=True)
-    # delete yesterday's data
-    response = s3.list_objects(Bucket=bucket_name, Prefix="price-data-" + yesterday)
-    for obj in response["Contents"]:
-        s3.delete_object(Bucket=bucket_name, Key=obj["Key"])
+    time.sleep(60)
+    # rename file and delete yesterday's data
+    response = s3.list_objects(Bucket=bucket_name, Prefix="price-data-" + today)
+    files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
+    files.append("price-data-" + yesterday + ".csv")
+    for f in files:
+        if "part" in f:
+            s3.copy_object(
+                    ACL='public-read',
+                    Bucket=bucket_name,
+                    CopySource=bucket_name + "/" + f,
+                    Key="price-data-" + today + ".csv")
+            s3.delete_object(Bucket=bucket_name, Key=f)
+        else:
+            s3.delete_object(Bucket=bucket_name, Key=f)
