@@ -45,10 +45,10 @@ if __name__ == "__main__":
     
     old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
     
-    for symbol in symbols[:5]: #remove [:3]
+    for symbol in symbols:
         try:
             price_data = alphavantage_api_call(api_key, symbol)
-            #time.sleep(15) # UNCOMMENT #
+            time.sleep(15)
             price_data = json.loads(price_data.text)["Time Series (1min)"]
             for tf, price in price_data.items():
                 row.append((symbol, 

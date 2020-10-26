@@ -1,0 +1,15 @@
+NLP Pipeline for tweets : 
+-  word2vec + Kmeans 
+Run news ETL script
+NLP Pipeline for news : same as tweets
+
+Use cloudFormation to configurate clusters
+Use AWS Steps to schedule steps (ETL concurrently then processing)
+
+Wait for prices processing... 
+==> Compute nodes, write nodes + required data
+
+Process the file with d3.js
+Run it as an app (use alarms, AWS lambda etc...)
+
+Add functionalities

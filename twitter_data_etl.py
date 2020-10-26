@@ -12,7 +12,7 @@ from pyspark.sql.types import *
 if __name__ == "__main__":
     
     def twitter_api_call(api_key, symbol, start_time, end_time, max_results=100):
-        args = f"max_results={max_results}&query={symbol}&start_time={start_time}&end_time={end_time}"
+        args = f"max_results={max_results}&tweet.fields=lang&query={symbol}&start_time={start_time}&end_time={end_time}"
         url = f"https://api.twitter.com/2/tweets/search/recent?{args}"
         headers = {"Authorization": "Bearer {}".format(api_key)}
         response = requests.request("GET", url, headers=headers)
@@ -20,9 +20,11 @@ if __name__ == "__main__":
 
     def extract_tweets(twitter_json):
         tweets = []
+        lang = []
         for i in range(len(twitter_json["data"])):
             tweets.append(twitter_json["data"][i]["text"])
-        return tweets
+            lang.append(twitter_json["data"][i]["lang"])
+        return tweets, lang
 
     s3 = boto3.client("s3")
     yaml_file = s3.get_object(Bucket="cse6242-neren3", Key="config.yaml")
@@ -41,7 +43,8 @@ if __name__ == "__main__":
     schema = StructType([
     StructField("symbol", StringType(), True),
     StructField("date", StringType(), True), 
-    StructField("tweets", StringType(), True)
+    StructField("tweets", StringType(), True),
+    StructField("lang", StringType(), True)
     ])
 
     row = []
@@ -54,12 +57,12 @@ if __name__ == "__main__":
     old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
     random.shuffle(symbols)
 
-    for symbol in symbols[:450]:
+    for symbol in symbols[300:]: #PUT :450
         try:
             twitter_json = twitter_api_call(api_key, symbol, start_time, end_time, max_results=100)
-            tweets = extract_tweets(twitter_json)
-            for tweet in tweets:
-                  row.append((symbol, today, tweet))
+            tweets, lang = extract_tweets(twitter_json)
+            for i in range(len(tweets)):
+                  row.append((symbol, today, tweets[i], lang[i]))
         except:
             continue
         
