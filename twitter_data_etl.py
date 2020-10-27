@@ -57,7 +57,7 @@ if __name__ == "__main__":
     old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
     random.shuffle(symbols)
 
-    for symbol in symbols[300:]: #PUT :450
+    for symbol in symbols[450:]:
         try:
             twitter_json = twitter_api_call(api_key, symbol, start_time, end_time, max_results=100)
             tweets, lang = extract_tweets(twitter_json)
