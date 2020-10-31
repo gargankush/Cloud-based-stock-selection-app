@@ -44,7 +44,7 @@ def lambda_handler(event, context):
     {
         'Name': 'Boostrap EMR',
         'ScriptBootstrapAction': {
-            'Path': 's3://team166project/bootstrap.sh'
+            'Path': 's3://web-app-project/bootstrap.sh'
         }
     }
 ])

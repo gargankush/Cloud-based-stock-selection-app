@@ -2,7 +2,6 @@ import boto3
 import requests
 import yaml
 import json
-import random
 import datetime
 from datetime import date, timedelta, datetime
 from pyspark.sql import SparkSession
@@ -23,14 +22,14 @@ def extract_tweets(twitter_json):
         lang.append(twitter_json["data"][i]["lang"])
     return tweets, lang
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
 
+    bucket_name = "web-app-project"
     s3 = boto3.client("s3")
-    yaml_file = s3.get_object(Bucket="cse6242-neren3", Key="config.yaml")
+    yaml_file = s3.get_object(Bucket=bucket_name, Key="config.yaml")
     yaml_file = yaml.safe_load(yaml_file["Body"].read().decode("utf-8"))
     api_key = yaml_file["twitter"]["bearer_token"]
 
-    bucket_name = "team166project"
     spark = SparkSession\
             .builder\
             .appName("etl")\
@@ -54,9 +53,8 @@ if __name__ == "__main__":
     start_time = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z" 
     end_time = (datetime.utcnow()- timedelta(hours=1)).isoformat("T") + "Z"
     old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
-    random.shuffle(symbols)
 
-    for symbol in symbols[450:]:
+    for symbol in symbols:
         try:
             twitter_json = twitter_api_call(api_key, symbol, start_time, end_time, max_results=100)
             tweets, lang = extract_tweets(twitter_json)

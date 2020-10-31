@@ -16,14 +16,14 @@ def alphavantage_api_call(api_key, symbol, interval="1min"):
 
 if __name__ == "__main__":
 
-    bucket_name = "team166project"
+    bucket_name = "web-app-project"
     spark = SparkSession\
         .builder\
         .appName("etl")\
         .getOrCreate()
    
     s3 = boto3.client('s3')
-    yaml_file = s3.get_object(Bucket="cse6242-neren3", Key="config.yaml")
+    yaml_file = s3.get_object(Bucket=bucket_name, Key="config.yaml")
     yaml_file = yaml.safe_load(yaml_file["Body"].read().decode("utf-8"))
     api_key = yaml_file["alphavantage"]["api_key"]
     body = s3.get_object(Bucket=bucket_name, Key="symbols.txt")['Body'].read()
@@ -48,7 +48,7 @@ if __name__ == "__main__":
     for symbol in symbols:
         try:
             price_data = alphavantage_api_call(api_key, symbol)
-            time.sleep(15)
+            time.sleep(13)
             price_data = json.loads(price_data.text)["Time Series (1min)"]
             for tf, price in price_data.items():
                 row.append((symbol, 

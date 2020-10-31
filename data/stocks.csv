@@ -1,0 +1,150 @@
+symbol,name,marketcap
+AAPL,Apple Inc.,1862.0
+MSFT,Microsoft Corporation,1531.0
+AMZN,"Amazon.com, Inc.",1521.0
+BABA,Alibaba Group Holding Limited,818.565
+FB,"Facebook, Inc.",749.553
+BRK-B,Berkshire Hathaway Inc.,481.951
+V,Visa Inc.,398.236
+WMT,Walmart Inc.,393.183
+TSLA,"Tesla, Inc.",367.824
+JNJ,Johnson & Johnson,360.948
+PG,The Procter & Gamble Company,339.955
+JPM,JPMorgan Chase & Co.,298.846
+NVDA,NVIDIA Corporation,309.697
+MA,Mastercard Incorporated,287.752
+BAC,Bank of America Corporation,205.278
+VZ,Verizon Communications Inc.,235.83
+DIS,The Walt Disney Company,219.106
+PYPL,"PayPal Holdings, Inc.",218.386
+NFLX,"Netflix, Inc.",210.18
+KO,The Coca-Cola Company,206.534
+PFE,Pfizer Inc.,197.158
+CMCSA,Comcast Corporation,196.126
+T,AT&T Inc.,192.526
+MRK,"Merck & Co., Inc.",190.224
+NKE,"NIKE, Inc.",188.505
+INTC,Intel Corporation,181.459
+ORCL,Oracle Corporation,168.941
+CSCO,"Cisco Systems, Inc.",151.535
+ABBV,AbbVie Inc.,150.187
+NEE,"NextEra Energy, Inc.",143.424
+QCOM,QUALCOMM Incorporated,139.183
+XOM,Exxon Mobil Corporation,137.925
+UPS,"United Parcel Service, Inc.",135.743
+MDT,Medtronic plc,135.207
+CVX,Chevron Corporation,133.788
+TXN,Texas Instruments Incorporated,132.725
+BMY,Bristol-Myers Squibb Company,131.742
+JD,"JD.com, Inc.",126.449
+ZM,"Zoom Video Communications, Inc.",131.092
+PM,Philip Morris International Inc.,110.601
+SBUX,Starbucks Corporation,101.656
+IBM,International Business Machines Corporation,99.495
+RDS-B,Royal Dutch Shell plc,99.224
+RDS-A,Royal Dutch Shell plc,99.159
+AMD,"Advanced Micro Devices, Inc.",90.552
+WFC,Wells Fargo & Company,88.643
+C,Citigroup Inc.,86.236
+GSK,GlaxoSmithKline plc,83.643
+MS,Morgan Stanley,84.187
+RTX,Raytheon Technologies Corporation,82.497
+BA,The Boeing Company,81.512
+FIS,"Fidelity National Information Services, Inc.",77.196
+SCHW,The Charles Schwab Corporation,77.124
+CVS,CVS Health Corporation,73.405
+GILD,"Gilead Sciences, Inc.",72.904
+SQ,"Square, Inc.",68.694
+CL,Colgate-Palmolive Company,67.64
+MO,"Altria Group, Inc.",67.051
+GE,General Electric Company,64.998
+FISV,"Fiserv, Inc.",64.007
+INFY,Infosys Limited,60.546
+TJX,"The TJX Companies, Inc.",60.912
+CSX,CSX Corporation,60.371
+SNAP,Snap Inc.,58.69
+UBER,"Uber Technologies, Inc.",58.555
+ATVI,"Activision Blizzard, Inc.",58.454
+TFC,Truist Financial Corporation,56.783
+MU,"Micron Technology, Inc.",56.039
+VALE,Vale S.A.,54.223
+AMAT,"Applied Materials, Inc.",54.094
+BP,BP p.l.c.,50.668
+NEM,Newmont Corporation,50.483
+GM,General Motors Company,49.416
+BSX,Boston Scientific Corporation,49.029
+GOLD,Barrick Gold Corporation,47.561
+TEAM,Atlassian Corporation Plc,47.752
+BIDU,"Baidu, Inc.",45.38
+PBR,Petróleo Brasileiro S.A. - Petrobras,42.795
+PBR-A,Petróleo Brasileiro S.A. - Petrobras,42.795
+EQNR,Equinor ASA,42.833
+DD,"DuPont de Nemours, Inc.",41.741
+RKT,"Rocket Companies, Inc.",36.45
+ITUB,Itaú Unibanco Holding S.A.,38.191
+KDP,Keurig Dr Pepper Inc.,37.854
+KHC,The Kraft Heinz Company,37.399
+NIO,NIO Limited,37.388
+IBN,ICICI Bank Limited,36.442
+LVS,Las Vegas Sands Corp.,36.71
+EPD,Enterprise Products Partners L.P.,36.17
+PINS,"Pinterest, Inc.",35.402
+MET,"MetLife, Inc.",34.355
+SAN,"Banco Santander, S.A.",33.144
+DOW,Dow Inc.,33.742
+ABEV,Ambev S.A.,33.341
+EBAY,eBay Inc.,33.335
+TWTR,"Twitter, Inc.",32.714
+PTON,"Peloton Interactive, Inc.",32.089
+F,Ford Motor Company,30.753
+COP,ConocoPhillips,30.565
+BK,The Bank of New York Mellon Corporation,30.448
+WBA,"Walgreens Boots Alliance, Inc.",29.497
+CARR,Carrier Global Corporation,28.921
+AIG,"American International Group, Inc.",27.127
+KMI,"Kinder Morgan, Inc.",26.939
+ING,ING Groep N.V.,26.685
+MRNA,"Moderna, Inc.",26.623
+LYG,Lloyds Banking Group plc,25.881
+CHWY,"Chewy, Inc.",25.41
+FCX,Freeport-McMoRan Inc.,25.181
+MRVL,Marvell Technology Group Ltd.,25.139
+TME,Tencent Music Entertainment Group,25.029
+KR,The Kroger Co.,24.941
+U,Unity Software Inc.,24.988
+HPQ,HP Inc.,24.668
+SIRI,Sirius XM Holdings Inc.,24.35
+AFL,Aflac Incorporated,23.893
+LUV,Southwest Airlines Co.,23.333
+WMB,"The Williams Companies, Inc.",23.288
+BBD,Banco Bradesco S.A.,29.021
+SLB,Schlumberger Limited,20.797
+WY,Weyerhaeuser Company,20.366
+DAL,"Delta Air Lines, Inc.",19.54
+MPC,Marathon Petroleum Corporation,19.196
+PCG,PG&E Corporation,18.986
+NOK,Nokia Corporation,18.432
+IQ,"iQIYI, Inc.",18.121
+VIAC,ViacomCBS Inc.,17.667
+SU,Suncor Energy Inc.,17.22
+LI,Li Auto Inc.,16.869
+FITB,Fifth Third Bancorp,16.54
+TDOC,"Teladoc Health, Inc.",16.573
+STNE,StoneCo Ltd.,16.192
+FE,FirstEnergy Corp.,16.112
+PLTR,Palantir Technologies Inc.,16.082
+ATUS,"Altice USA, Inc.",15.625
+ETSY,"Etsy, Inc.",15.397
+BKR,Baker Hughes Company,15.291
+WORK,"Slack Technologies, Inc.",14.594
+VIPS,Vipshop Holdings Limited,14.466
+LVGO,"Livongo Health, Inc.",14.199
+XPEV,XPeng Inc.,13.949
+ET,Energy Transfer LP,13.884
+DKNG,DraftKings Inc.,13.39
+AES,The AES Corporation,12.97
+OKE,"ONEOK, Inc.",12.888
+RF,Regions Financial Corporation,12.77
+KEY,KeyCorp,12.671
+RCL,Royal Caribbean Group,12.587
+CCL,Carnival Corporation & Plc,12.383
