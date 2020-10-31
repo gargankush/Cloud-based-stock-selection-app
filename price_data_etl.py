@@ -8,13 +8,13 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
 
+def alphavantage_api_call(api_key, symbol, interval="1min"):
+    args = f"function=TIME_SERIES_INTRADAY&symbol={symbol}&interval={interval}&apikey={api_key}&outputsize=full"
+    url = f"https://www.alphavantage.co/query?{args}"
+    response = requests.get(url)
+    return response
+
 if __name__ == "__main__":
-    
-    def alphavantage_api_call(api_key, symbol, interval="1min"):
-        args = f"function=TIME_SERIES_INTRADAY&symbol={symbol}&interval={interval}&apikey={api_key}&outputsize=full"
-        url = f"https://www.alphavantage.co/query?{args}"
-        response = requests.get(url)
-        return response
 
     bucket_name = "team166project"
     spark = SparkSession\
@@ -64,7 +64,6 @@ if __name__ == "__main__":
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     df.repartition(1).write.csv('s3://' + bucket_name + '/price-data-' + today, header=True)
-    time.sleep(60)
     # rename file and delete yesterday's data
     response = s3.list_objects(Bucket=bucket_name, Prefix="price-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]

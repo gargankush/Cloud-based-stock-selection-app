@@ -1,4 +1,3 @@
-import time
 import boto3
 import requests
 import yaml
@@ -9,22 +8,22 @@ from datetime import date, timedelta, datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
-if __name__ == "__main__":
-    
-    def twitter_api_call(api_key, symbol, start_time, end_time, max_results=100):
-        args = f"max_results={max_results}&tweet.fields=lang&query={symbol}&start_time={start_time}&end_time={end_time}"
-        url = f"https://api.twitter.com/2/tweets/search/recent?{args}"
-        headers = {"Authorization": "Bearer {}".format(api_key)}
-        response = requests.request("GET", url, headers=headers)
-        return response.json()
+def twitter_api_call(api_key, symbol, start_time, end_time, max_results=100):
+    args = f"max_results={max_results}&tweet.fields=lang&query={symbol}&start_time={start_time}&end_time={end_time}"
+    url = f"https://api.twitter.com/2/tweets/search/recent?{args}"
+    headers = {"Authorization": "Bearer {}".format(api_key)}
+    response = requests.request("GET", url, headers=headers)
+    return response.json()
 
-    def extract_tweets(twitter_json):
-        tweets = []
-        lang = []
-        for i in range(len(twitter_json["data"])):
-            tweets.append(twitter_json["data"][i]["text"])
-            lang.append(twitter_json["data"][i]["lang"])
-        return tweets, lang
+def extract_tweets(twitter_json):
+    tweets = []
+    lang = []
+    for i in range(len(twitter_json["data"])):
+        tweets.append(twitter_json["data"][i]["text"])
+        lang.append(twitter_json["data"][i]["lang"])
+    return tweets, lang
+
+if __name__ == "__main__":    
 
     s3 = boto3.client("s3")
     yaml_file = s3.get_object(Bucket="cse6242-neren3", Key="config.yaml")
@@ -72,7 +71,6 @@ if __name__ == "__main__":
     df = df.filter(df["date"] != week_ago)
     df.repartition(1).write.json('s3://' + bucket_name + '/twitter-data-' + today)
     # rename file and delete old files
-    time.sleep(60)
     response = s3.list_objects(Bucket=bucket_name, Prefix="twitter-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
     files.append("twitter-data-" + yesterday + ".json")
