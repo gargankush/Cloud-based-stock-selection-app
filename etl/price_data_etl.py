@@ -44,7 +44,7 @@ if __name__ == "__main__":
     today = date.today().isoformat()
     
     old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
-    
+
     for symbol in symbols:
         try:
             price_data = alphavantage_api_call(api_key, symbol)
