@@ -1,0 +1,86 @@
+ {
+  "Comment": "Creation of the EMR Cluster",
+  "StartAt": "CreateEMRCluster",
+  "States":{
+    "CreateEMRCluster":{
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:743335120993:function:CreateEMRCluster",
+      "Next": "WaitOneMin"
+      },
+    "WaitOneMin" : {
+      "Type" : "Wait",
+      "Seconds" : 60,
+      "Next": "CheckCluster"
+      },
+    "CheckCluster": {
+      "Type" : "Task",
+      "Resource" : "arn:aws:lambda:us-east-1:743335120993:function:ClusterIsUp",
+      "Next": "ClusterIsUp?"
+    },
+    "ClusterIsUp?": {
+      "Type": "Choice",
+      "Choices": [
+      {
+      "Variable": "$.state",
+      "StringEquals": "WAITING",
+      "Next": "ConcurrentETLSteps"
+     },
+     {
+     "Variable": "$.state",
+      "StringEquals": "STARTING",
+      "Next": "WaitOneMin"
+     },
+     {
+     "Variable": "$.state",
+      "StringEquals": "BOOTSTRAPPING",
+      "Next": "WaitOneMin"
+     }  
+      ]
+    },
+    "ConcurrentETLSteps":{
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:743335120993:function:ETL",
+      "Next": "WaitFewSecs"
+    },
+    "CheckEMRStep":{
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-east-1:743335120993:function:CheckEMRStep",
+      "Next": "StepsCompleted?"
+    },
+    "StepsCompleted?": {
+      "Type": "Choice",
+      "Choices": [
+      {
+      "Variable": "$.state",
+      "StringEquals": "PENDING",
+      "Next": "WaitFewSecs"
+     },
+     {
+     "Variable": "$.state",
+      "StringEquals": "RUNNING",
+      "Next": "WaitFewSecs"
+     },
+     {
+     "Variable": "$.state",
+      "StringEquals": "COMPLETED",
+      "Next": "TerminateEMRCluster"
+     },
+     {
+     "Variable": "$.state",
+      "StringEquals": "FAILED",
+      "Next": "TerminateEMRCluster"
+     }
+      ]
+    },
+    "TerminateEMRCluster" : {
+      "Type" : "Task",
+      "Resource" : "arn:aws:lambda:us-east-1:743335120993:function:TerminateEMRCluster",
+      "End": true
+      },
+     "WaitFewSecs" : {
+      "Type" : "Wait",
+      "Seconds" : 30,
+      "Next": "CheckEMRStep"
+      }
+    }
+  }
