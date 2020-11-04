@@ -40,11 +40,7 @@ if __name__ == "__main__":
     ])
     
     row = []
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
     today = date.today().isoformat()
-    
-    old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
-
     for symbol in symbols:
         try:
             price_data = alphavantage_api_call(api_key, symbol)
@@ -61,6 +57,8 @@ if __name__ == "__main__":
         except:
             continue
 
+     yesterday = (date.today() - timedelta(days=1)).isoformat()
+    old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     df.repartition(1).write.csv('s3://' + bucket_name + '/price-data-' + today, header=True)

@@ -37,22 +37,18 @@ if __name__ == "__main__":
 
     body = s3.get_object(Bucket=bucket_name, Key="symbols.txt")['Body'].read()
     symbols = body.decode("utf8").split('\n')
-
     schema = StructType([
     StructField("symbol", StringType(), True),
     StructField("date", StringType(), True), 
     StructField("tweets", StringType(), True),
     StructField("lang", StringType(), True)
     ])
-
     row = []
     yesterday = (date.today() - timedelta(days=1)).isoformat()
     today = date.today().isoformat()
-    week_ago = (date.today() - timedelta(days=6)).isoformat()
     
     start_time = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z" 
     end_time = (datetime.utcnow()- timedelta(hours=1)).isoformat("T") + "Z"
-    old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
 
     for symbol in symbols:
         try:
@@ -62,10 +58,12 @@ if __name__ == "__main__":
                   row.append((symbol, today, tweets[i], lang[i]))
         except:
             continue
-        
+
+    old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     # keep data for trailing week
+    week_ago = (date.today() - timedelta(days=6)).isoformat()
     df = df.filter(df["date"] != week_ago)
     df.repartition(1).write.json('s3://' + bucket_name + '/twitter-data-' + today)
     # rename file and delete old files
