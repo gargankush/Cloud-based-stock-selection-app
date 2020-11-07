@@ -7,7 +7,6 @@ from datetime import date, timedelta, datetime
 from pyspark.sql import SparkSession
 from pyspark.sql.types import *
 
-
 def alphavantage_api_call(api_key, symbol, interval="1min"):
     args = f"function=TIME_SERIES_INTRADAY&symbol={symbol}&interval={interval}&apikey={api_key}&outputsize=full"
     url = f"https://www.alphavantage.co/query?{args}"
@@ -26,7 +25,7 @@ if __name__ == "__main__":
     yaml_file = s3.get_object(Bucket=bucket_name, Key="config.yaml")
     yaml_file = yaml.safe_load(yaml_file["Body"].read().decode("utf-8"))
     api_key = yaml_file["alphavantage"]["api_key"]
-    body = s3.get_object(Bucket=bucket_name, Key="symbols.txt")['Body'].read()
+    body = s3.get_object(Bucket=bucket_name, Key="data/symbols.txt")['Body'].read()
     symbols = body.decode("utf8").split('\n')
     
     schema = StructType([
@@ -41,6 +40,7 @@ if __name__ == "__main__":
     
     row = []
     today = date.today().isoformat()
+
     for symbol in symbols:
         try:
             price_data = alphavantage_api_call(api_key, symbol)
@@ -57,22 +57,22 @@ if __name__ == "__main__":
         except:
             continue
 
-     yesterday = (date.today() - timedelta(days=1)).isoformat()
-    old_df = spark.read.csv('s3://' + bucket_name + '/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
+    yesterday = (date.today() - timedelta(days=1)).isoformat()
+    old_df = spark.read.csv('s3://' + bucket_name + '/data/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
-    df.repartition(1).write.csv('s3://' + bucket_name + '/price-data-' + today, header=True)
+    df.repartition(1).write.csv('s3://' + bucket_name + '/data/price-data-' + today, header=True)
     # rename file and delete yesterday's data
-    response = s3.list_objects(Bucket=bucket_name, Prefix="price-data-" + today)
+    response = s3.list_objects(Bucket=bucket_name, Prefix="data/price-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
-    files.append("price-data-" + yesterday + ".csv")
+    files.append("data/price-data-" + yesterday + ".csv")
     for f in files:
         if "part" in f:
             s3.copy_object(
                     ACL='public-read',
                     Bucket=bucket_name,
                     CopySource=bucket_name + "/" + f,
-                    Key="price-data-" + today + ".csv")
+                    Key="data/price-data-" + today + ".csv")
             s3.delete_object(Bucket=bucket_name, Key=f)
         else:
             s3.delete_object(Bucket=bucket_name, Key=f)

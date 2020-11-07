@@ -11,7 +11,7 @@ def lambda_handler(message, context):
            'ActionOnFailure': 'CONTINUE',
            'HadoopJarStep': {
                'Jar': 'command-runner.jar',
-               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/twitter_data_etl.py"]
+               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/twitter_data_etl.py"]
            }
         }
     
@@ -19,7 +19,7 @@ def lambda_handler(message, context):
            'ActionOnFailure': 'CONTINUE',
            'HadoopJarStep': {
                'Jar': 'command-runner.jar',
-               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/price_data_etl.py"]
+               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/price_data_etl.py"]
            }
         }
     # add concurrent steps

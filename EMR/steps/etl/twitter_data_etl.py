@@ -35,7 +35,7 @@ if __name__ == "__main__":
             .appName("etl")\
             .getOrCreate()
 
-    body = s3.get_object(Bucket=bucket_name, Key="symbols.txt")['Body'].read()
+    body = s3.get_object(Bucket=bucket_name, Key="data/symbols.txt")['Body'].read()
     symbols = body.decode("utf8").split('\n')
     schema = StructType([
     StructField("symbol", StringType(), True),
@@ -59,24 +59,24 @@ if __name__ == "__main__":
         except:
             continue
 
-    old_df = spark.read.json('s3://' + bucket_name + '/twitter-data-' + yesterday + ".json")
+    old_df = spark.read.json('s3://' + bucket_name + '/data/twitter-data-' + yesterday + ".json")
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     # keep data for trailing week
     week_ago = (date.today() - timedelta(days=6)).isoformat()
     df = df.filter(df["date"] != week_ago)
-    df.repartition(1).write.json('s3://' + bucket_name + '/twitter-data-' + today)
+    df.repartition(1).write.json('s3://' + bucket_name + '/data/twitter-data-' + today)
     # rename file and delete old files
-    response = s3.list_objects(Bucket=bucket_name, Prefix="twitter-data-" + today)
+    response = s3.list_objects(Bucket=bucket_name, Prefix="data/twitter-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
-    files.append("twitter-data-" + yesterday + ".json")
+    files.append("data/twitter-data-" + yesterday + ".json")
     for f in files:
         if "part" in f:
             s3.copy_object(
             ACL='public-read',
             Bucket=bucket_name,
             CopySource=bucket_name + "/" + f,
-            Key="twitter-data-" + today + ".json")
+            Key="data/twitter-data-" + today + ".json")
             s3.delete_object(Bucket=bucket_name, Key=f)
         else:
-            s3.delete_object(Bucket=bucket_name, Key=f) 
+            s3.delete_object(Bucket=bucket_name, Key=f)
