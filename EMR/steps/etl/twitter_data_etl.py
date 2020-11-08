@@ -44,8 +44,12 @@ if __name__ == "__main__":
     StructField("lang", StringType(), True)
     ])
     row = []
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
     today = date.today().isoformat()
+    # If we are tuesday, the last data is from saturday
+    if datetime.today().weekday() == 1:
+        previous = (datetime.today() - timedelta(days=2)).isoformat()
+    else: 
+        previous = (date.today() - timedelta(days=1)).isoformat()
     
     start_time = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z" 
     end_time = (datetime.utcnow()- timedelta(hours=1)).isoformat("T") + "Z"
@@ -59,7 +63,7 @@ if __name__ == "__main__":
         except:
             continue
 
-    old_df = spark.read.json('s3://' + bucket_name + '/data/twitter-data-' + yesterday + ".json")
+    old_df = spark.read.json('s3://' + bucket_name + '/data/twitter-data-' + previous + ".json")
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     # keep data for trailing week
@@ -69,7 +73,7 @@ if __name__ == "__main__":
     # rename file and delete old files
     response = s3.list_objects(Bucket=bucket_name, Prefix="data/twitter-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
-    files.append("data/twitter-data-" + yesterday + ".json")
+    files.append("data/twitter-data-" + previous + ".json")
     for f in files:
         if "part" in f:
             s3.copy_object(

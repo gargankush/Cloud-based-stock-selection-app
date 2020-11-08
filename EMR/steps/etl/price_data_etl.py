@@ -56,16 +56,20 @@ if __name__ == "__main__":
                            price["5. volume"]))
         except:
             continue
-
-    yesterday = (date.today() - timedelta(days=1)).isoformat()
-    old_df = spark.read.csv('s3://' + bucket_name + '/data/price-data-' + yesterday + '.csv', header=True, inferSchema=True)
+    # We run the workflow from tuesday to saturday after the close of the stock exchange
+    # If we are tuesday, the last data is from saturday
+    if datetime.today().weekday() == 1:
+        previous = (datetime.today() - timedelta(days=2)).isoformat()
+    else: 
+        previous = (date.today() - timedelta(days=1)).isoformat()
+    old_df = spark.read.csv('s3://' + bucket_name + '/data/price-data-' + previous + '.csv', header=True, inferSchema=True)
     new_df = spark.createDataFrame(row, schema)
     df = new_df.union(old_df)
     df.repartition(1).write.csv('s3://' + bucket_name + '/data/price-data-' + today, header=True)
-    # rename file and delete yesterday's data
+    # rename file and delete previous data
     response = s3.list_objects(Bucket=bucket_name, Prefix="data/price-data-" + today)
     files = [response["Contents"][i]["Key"] for i in range(len(response["Contents"]))]
-    files.append("data/price-data-" + yesterday + ".csv")
+    files.append("data/price-data-" + previous + ".csv")
     for f in files:
         if "part" in f:
             s3.copy_object(
