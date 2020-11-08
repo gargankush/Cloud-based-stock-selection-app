@@ -7,23 +7,21 @@ def lambda_handler(message, context):
     # we retrive the cluster_id that was passed by the lambda function
     cluster_id = message["cluster_id"]
     
-    step1 = {'Name': 'price_etl',
+    step1 = {'Name': 'price_prediction',
            'ActionOnFailure': 'CONTINUE',
            'HadoopJarStep': {
                'Jar': 'command-runner.jar',
-               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/price_data_etl.py"]
+               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/price_prediction.py"]
            }
         }
-    
-    step2 = {'Name': 'twitter_etl',
+        
+    step2 = {'Name': 'sentiment_analysis',
            'ActionOnFailure': 'CONTINUE',
            'HadoopJarStep': {
                'Jar': 'command-runner.jar',
-               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/twitter_data_etl.py"]
+               'Args': ["spark-submit", "--deploy-mode", "cluster", "s3://web-app-project/spark-jobs/sentiment_analysis.py"]
            }
         }
-    
-    
     
     action = emr.add_job_flow_steps(JobFlowId=cluster_id, Steps=[step1, step2])
     response = {}

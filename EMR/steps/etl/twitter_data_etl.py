@@ -64,7 +64,7 @@ if __name__ == "__main__":
     df = new_df.union(old_df)
     # keep data for trailing week
     week_ago = (date.today() - timedelta(days=6)).isoformat()
-    df = df.filter(df["date"] != week_ago)
+    # df = df.filter(df["date"] != week_ago)
     df.repartition(1).write.json('s3://' + bucket_name + '/data/twitter-data-' + today)
     # rename file and delete old files
     response = s3.list_objects(Bucket=bucket_name, Prefix="data/twitter-data-" + today)
