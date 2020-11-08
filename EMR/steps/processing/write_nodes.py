@@ -84,4 +84,8 @@ if __name__ == '__main__':
     ticker_data = ohlc.join(price, ["symbol"]).join(sentiment, ["symbol"])
     # write files
     ticker_data.repartition(1).write.mode("overwrite").csv("s3://" + bucket_name + "/data/ticker-data", header=True)
+    # filter nodes that might not appear
+    symbols = ticker_data.select("symbol").rdd.map(lambda x: x[0]).collect()
+    nodes_df = nodes.filter(col("source").isin(symbols))
+    nodes_df = nodes.filter(col("target").isin(symbols))
     nodes_df.repartition(1).write.mode("overwrite").csv("s3://" + bucket_name + "/data/nodes", header=True)
